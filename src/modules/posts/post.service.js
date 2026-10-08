@@ -10,19 +10,13 @@ const createPost = async (userId, { title, content }) => {
   }
   return Post.create({ title, content, author: userId });
 };
-
-// Scenario 2: all posts of a particular user, ONE pipeline with $lookup.
-// Pagination and the total count are done inside the same pipeline.
 const getPostsByUser = async (userId, { page, limit, skip }) => {
   if (!mongoose.isValidObjectId(userId)) {
     throw new ApiError(400, 'Invalid user id');
   }
 
   const result = await User.aggregate([
-    // default _id index
     { $match: { _id: new mongoose.Types.ObjectId(userId) } },
-
-    // the user's posts for this page, newest first (uses { author: 1, _id: -1 })
     {
       $lookup: {
         from: Post.collection.name,
@@ -36,8 +30,6 @@ const getPostsByUser = async (userId, { page, limit, skip }) => {
         as: 'posts',
       },
     },
-
-    // total number of posts of this user (uses { author: 1, _id: -1 })
     {
       $lookup: {
         from: Post.collection.name,
@@ -69,9 +61,6 @@ const getPostsByUser = async (userId, { page, limit, skip }) => {
     meta: buildMeta(total, page, limit),
   };
 };
-
-// Public feed: all posts, newest first, paginated.
-// Sorted by _id, so it uses the default _id index (no new index needed).
 const listAllPosts = async ({ page, limit, skip }) => {
   const [items, total] = await Promise.all([
     Post.find()

@@ -10,8 +10,6 @@ const stripPassword = (user) => {
   delete obj.password;
   return obj;
 };
-
-// Admin: add a user
 const createUser = async ({ name, email, password, role, interests }) => {
   if (!name || !email || !password) {
     throw new ApiError(400, 'name, email and password are required');
@@ -24,8 +22,6 @@ const createUser = async ({ name, email, password, role, interests }) => {
   const user = await User.create({ name, email, password: hashed, role, interests });
   return stripPassword(user);
 };
-
-// Admin: list all users. Sorted by _id, so it uses the default _id index
 const listUsers = async ({ page, limit, skip }) => {
   const [items, total] = await Promise.all([
     User.find().sort({ _id: -1 }).skip(skip).limit(limit),
@@ -33,15 +29,11 @@ const listUsers = async ({ page, limit, skip }) => {
   ]);
   return { items, meta: buildMeta(total, page, limit) };
 };
-
-// Read one user by id. Uses the default _id index
 const getUserById = async (id) => {
   const user = await User.findById(id);
   if (!user) throw new ApiError(404, 'User not found');
   return user;
 };
-
-// Admin: update a user
 const updateUser = async (id, { name, email, password, role, interests }) => {
   const updates = {};
   if (name !== undefined) updates.name = name;
@@ -65,8 +57,6 @@ const updateUser = async (id, { name, email, password, role, interests }) => {
   if (!user) throw new ApiError(404, 'User not found');
   return user;
 };
-
-// Admin: remove a user together with their notes and posts
 const deleteUser = async (adminId, id) => {
   if (String(adminId) === String(id)) {
     throw new ApiError(400, 'You cannot delete your own account');
@@ -80,14 +70,8 @@ const deleteUser = async (adminId, id) => {
     Post.deleteMany({ author: id }), // uses { author: 1, _id: -1 }
   ]);
 };
-
-// Scenario 1: users grouped by interests, exactly ONE aggregate() call.
-// Pagination (over the groups) and the total count are done inside the same
-// pipeline with $facet, so no other query method is needed.
 const groupByInterests = async ({ page, limit, skip }) => {
   const result = await User.aggregate([
-    // Range match on the multikey index { interests: 1 }: keeps only users
-    // that have at least one interest, using an index scan
     { $match: { interests: { $gt: '' } } },
     { $unwind: '$interests' },
     {

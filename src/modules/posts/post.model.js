@@ -8,8 +8,6 @@ const postSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-
-// Supports the $lookup (posts of a given user, newest first)
 postSchema.index({ author: 1, _id: -1 });
 
 module.exports = mongoose.model('Post', postSchema);

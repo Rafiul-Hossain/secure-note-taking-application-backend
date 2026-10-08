@@ -40,8 +40,6 @@ const login = async ({ email, password }) => {
   if (!email || !password) {
     throw new ApiError(400, 'email and password are required');
   }
-
-  // uses the unique email index
   const user = await User.findOne({ email: email.toLowerCase() }).select('+password');
   if (!user || !(await bcrypt.compare(password, user.password))) {
     throw new ApiError(401, 'Invalid email or password');

@@ -8,8 +8,6 @@ const noteSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-
-// "List my notes" (filter by owner, newest first, paginated)
 noteSchema.index({ owner: 1, _id: -1 });
 
 module.exports = mongoose.model('Note', noteSchema);

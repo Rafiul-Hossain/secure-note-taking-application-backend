@@ -10,11 +10,7 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-
-// Login lookup by email + uniqueness
 userSchema.index({ email: 1 }, { unique: true });
-
-// Multikey index for the "group users by interests" aggregation
 userSchema.index({ interests: 1 });
 
 module.exports = mongoose.model('User', userSchema);
