@@ -70,4 +70,18 @@ const getPostsByUser = async (userId, { page, limit, skip }) => {
   };
 };
 
-module.exports = { createPost, getPostsByUser };
+// Public feed: all posts, newest first, paginated.
+// Sorted by _id, so it uses the default _id index (no new index needed).
+const listAllPosts = async ({ page, limit, skip }) => {
+  const [items, total] = await Promise.all([
+    Post.find()
+      .sort({ _id: -1 })
+      .skip(skip)
+      .limit(limit)
+      .populate('author', 'name'), // name only, no email on a public endpoint
+    Post.estimatedDocumentCount(),
+  ]);
+  return { items, meta: buildMeta(total, page, limit) };
+};
+
+module.exports = { createPost, getPostsByUser, listAllPosts };

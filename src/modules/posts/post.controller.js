@@ -15,4 +15,9 @@ const listByUser = asyncHandler(async (req, res) => {
   res.json({ message: 'User posts fetched', data: { user, posts }, meta });
 });
 
-module.exports = { create, listByUser };
+const listAll = asyncHandler(async (req, res) => {
+  const { items, meta } = await postService.listAllPosts(getPagination(req.query));
+  res.json({ message: 'Posts fetched', data: items, meta });
+});
+
+module.exports = { create, listByUser, listAll };
