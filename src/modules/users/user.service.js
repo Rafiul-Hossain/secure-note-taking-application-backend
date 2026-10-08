@@ -66,8 +66,8 @@ const deleteUser = async (adminId, id) => {
   if (!user) throw new ApiError(404, 'User not found');
 
   await Promise.all([
-    Note.deleteMany({ owner: id }), // uses { owner: 1, _id: -1 }
-    Post.deleteMany({ author: id }), // uses { author: 1, _id: -1 }
+    Note.deleteMany({ owner: id }),
+    Post.deleteMany({ author: id }),
   ]);
 };
 const groupByInterests = async ({ page, limit, skip }) => {

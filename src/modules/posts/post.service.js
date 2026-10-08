@@ -67,7 +67,7 @@ const listAllPosts = async ({ page, limit, skip }) => {
       .sort({ _id: -1 })
       .skip(skip)
       .limit(limit)
-      .populate('author', 'name'), // name only, no email on a public endpoint
+      .populate('author', 'name'),
     Post.estimatedDocumentCount(),
   ]);
   return { items, meta: buildMeta(total, page, limit) };

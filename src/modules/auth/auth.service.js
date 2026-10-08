@@ -30,7 +30,7 @@ const register = async ({ name, email, password, interests }) => {
     email,
     password: hashed,
     interests,
-    role: 'user', // public registration always creates a normal user
+    role: 'user',
   });
 
   return { user: toSafeUser(user), token: signToken(user) };

@@ -5,8 +5,8 @@ const userController = require('./user.controller');
 
 router.use(auth);
 
-router.get('/me', userController.me); // must stay above '/:id'
-router.get('/grouped-by-interests', authorize('admin'), userController.groupedByInterests); // must stay above '/:id'
+router.get('/me', userController.me);
+router.get('/grouped-by-interests', authorize('admin'), userController.groupedByInterests);
 
 router.post('/', authorize('admin'), userController.create);
 router.get('/', authorize('admin'), userController.list);
